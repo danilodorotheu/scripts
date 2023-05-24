@@ -1,0 +1,48 @@
+{
+    "Comment": "Glue Job Step Function",
+    "StartAt": "ProcessParameters",
+    "States": {
+      "ProcessParameters": {
+        "Type": "Pass",
+        "Result": {
+          "ParametersList": [
+            {
+              "database_a_name.$": "$[0].database_a_name",
+              "table_a_name.$": "$[0].table_a_name",
+              "database_b_name.$": "$[0].database_b_name",
+              "table_b_name.$": "$[0].table_b_name"
+            },
+            {
+              "database_a_name.$": "$[1].database_a_name",
+              "table_a_name.$": "$[1].table_a_name",
+              "database_b_name.$": "$[1].database_b_name",
+              "table_b_name.$": "$[1].table_b_name"
+            }
+          ]
+        },
+        "ResultPath": "$.parametersList",
+        "Next": "InvokeGlueJob"
+      },
+      "InvokeGlueJob": {
+        "Type": "Map",
+        "ItemsPath": "$.parametersList",
+        "MaxConcurrency": 1,
+        "Iterator": {
+          "StartAt": "TriggerGlueJob",
+          "States": {
+            "TriggerGlueJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "your-glue-job-name",
+                "Input.$": "$"
+              },
+              "End": true
+            }
+          }
+        },
+        "End": true
+      }
+    }
+  }
+  

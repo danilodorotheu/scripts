@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "states:StartExecution",
+        "states:DescribeExecution",
+        "states:GetExecutionHistory"
+      ],
+      "Resource": "arn:aws:states:region:account-id:stateMachine:your-state-machine-name"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "glue:StartJobRun",
+      "Resource": "arn:aws:glue:region:account-id:job/your-glue-job-name"
+    }
+  ]
+}
